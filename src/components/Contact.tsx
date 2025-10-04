@@ -4,10 +4,12 @@ import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     phone: '',
-    message: '',
+    cep: '',
+    address: '',
+    number: '',
   });
+  const [isLoadingCep, setIsLoadingCep] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -17,10 +19,68 @@ const Contact: React.FC = () => {
     }));
   };
 
+  const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const cep = e.target.value.replace(/\D/g, '');
+    setFormData(prev => ({ ...prev, cep: e.target.value }));
+
+    if (cep.length === 8) {
+      setIsLoadingCep(true);
+      try {
+        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const data = await response.json();
+        
+        if (!data.erro) {
+          setFormData(prev => ({
+            ...prev,
+            address: `${data.logradouro}, ${data.bairro}, ${data.localidade} - ${data.uf}`,
+          }));
+        } else {
+          setFormData(prev => ({ ...prev, address: '' }));
+          alert('CEP não encontrado');
+        }
+      } catch (error) {
+        console.error('Erro ao buscar CEP:', error);
+        alert('Erro ao buscar CEP');
+      } finally {
+        setIsLoadingCep(false);
+      }
+    } else {
+      setFormData(prev => ({ ...prev, address: '' }));
+    }
+  };
+
+  const formatCep = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    return numbers.replace(/(\d{5})(\d{3})/, '$1-$2');
+  };
+
+  const formatPhone = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    if (numbers.length <= 10) {
+      return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    } else {
+      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Obrigado pelo seu contato! Retornaremos em breve.');
-    setFormData({ name: '', email: '', phone: '', message: '' });
+    
+    const message = `Olá! Gostaria de solicitar um orçamento para os serviços da Cacambas Pereira.
+
+*Dados do Cliente:*
+Nome: ${formData.name}
+Telefone: ${formData.phone}
+CEP: ${formData.cep}
+Endereço: ${formData.address}
+Número: ${formData.number}
+
+Aguardo retorno. Obrigado!`;
+
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://api.whatsapp.com/send/?phone=551152951951&text=${encodedMessage}&type=phone_number&app_absent=0`;
+    
+    window.open(whatsappUrl, '_blank');
   };
 
   const contactInfo = [
@@ -86,36 +146,48 @@ const Contact: React.FC = () => {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
               />
               <input
-                type="email"
-                name="email"
-                placeholder="Seu E-mail"
-                value={formData.email}
-                onChange={handleInputChange}
+                type="tel"
+                name="phone"
+                placeholder="Seu Telefone"
+                value={formatPhone(formData.phone)}
+                onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
               />
               <input
-                type="tel"
-                name="phone"
-                placeholder="Seu Telefone"
-                value={formData.phone}
-                onChange={handleInputChange}
+                type="text"
+                name="cep"
+                placeholder="CEP"
+                value={formatCep(formData.cep)}
+                onChange={handleCepChange}
+                maxLength={9}
+                required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
               />
-              <textarea
-                name="message"
-                placeholder="Sua Mensagem"
-                value={formData.message}
+              <input
+                type="text"
+                name="address"
+                placeholder="Endereço (preenchido automaticamente)"
+                value={formData.address}
+                onChange={handleInputChange}
+                readOnly
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 outline-none transition-all"
+              />
+              <input
+                type="text"
+                name="number"
+                placeholder="Número"
+                value={formData.number}
                 onChange={handleInputChange}
                 required
-                rows={6}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
               />
               <button
                 type="submit"
+                disabled={isLoadingCep}
                 className="w-full bg-secondary hover:bg-orange-600 text-white py-3 rounded-lg font-bold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
               >
-                Enviar Mensagem
+                {isLoadingCep ? 'Buscando CEP...' : 'Enviar para WhatsApp'}
               </button>
             </form>
           </div>
