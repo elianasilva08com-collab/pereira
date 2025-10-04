@@ -1,5 +1,5 @@
 import React from 'react';
-import { Truck, Wrench, Trash2 } from 'lucide-react';
+import { Truck, Wrench, Trash2, Construction } from 'lucide-react';
 
 const Services: React.FC = () => {
   const services = [
@@ -18,6 +18,11 @@ const Services: React.FC = () => {
       title: 'Coleta de Entulhos',
       description: 'Serviço especializado em coleta e destinação correta de entulhos da construção civil, seguindo todas as normas ambientais vigentes.',
     },
+    {
+      icon: Construction,
+      title: 'Terraplanagem',
+      description: 'Aluguel de equipamentos para terraplanagem: retroescavadeiras, bobcats e caminhões. Equipamentos modernos para movimentação de terra e obras.',
+    },
   ];
 
   return (
@@ -28,7 +33,7 @@ const Services: React.FC = () => {
           <div className="w-20 h-1 bg-secondary mx-auto rounded"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {services.map((service, index) => {
             const Icon = service.icon;
             return (
