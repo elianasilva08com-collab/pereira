@@ -1,5 +1,6 @@
 import React from 'react';
 import { Facebook, Instagram, MessageCircle, Phone, Mail, MapPin } from 'lucide-react';
+import AdminAccess from './AdminAccess';
 
 const Footer: React.FC = () => {
   const scrollToSection = (sectionId: string) => {
@@ -69,6 +70,7 @@ const Footer: React.FC = () => {
                       <a href="#" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-secondary transition-all duration-300 transform hover:-translate-y-1">
                         <MessageCircle size={20} />
                       </a>
+                      <AdminAccess />
                     </div>
                   )}
                 </div>

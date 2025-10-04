@@ -9,14 +9,12 @@ import Location from './components/Location';
 import Policy from './components/Policy';
 import Footer from './components/Footer';
 import WhatsAppFloat from './components/WhatsAppFloat';
-import AdminAccess from './components/AdminAccess';
 
 function App() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
       <WhatsAppFloat />
-      <AdminAccess />
       <main>
         <Hero />
         <Services />
