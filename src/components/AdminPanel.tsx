@@ -9,7 +9,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [activeTab, setActiveTab] = useState<'analytics' | 'html'>('analytics');
+  const [activeTab, setActiveTab] = useState<'analytics' | 'html' | 'events'>('analytics');
   
   // Analytics tab
   const [googleTagId, setGoogleTagId] = useState('');
@@ -18,6 +18,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   // HTML tab
   const [customHtml, setCustomHtml] = useState('');
   const [currentHtml, setCurrentHtml] = useState('');
+  
+  // Events tab
+  const [eventSnippet, setEventSnippet] = useState('');
+  const [currentEventSnippet, setCurrentEventSnippet] = useState('');
   
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -42,6 +46,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     if (savedHtml) {
       setCurrentHtml(savedHtml);
       setCustomHtml(savedHtml);
+    }
+
+    // Load current Event Snippet from localStorage
+    const savedEventSnippet = localStorage.getItem('googleEventSnippet');
+    if (savedEventSnippet) {
+      setCurrentEventSnippet(savedEventSnippet);
+      setEventSnippet(savedEventSnippet);
     }
   }, []);
 
@@ -213,6 +224,56 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     }, 1000);
   };
 
+  const handleSaveEventSnippet = () => {
+    if (!eventSnippet.trim()) {
+      setMessage('Por favor, insira um código de evento válido');
+      return;
+    }
+
+    setIsLoading(true);
+    
+    // Save to localStorage
+    localStorage.setItem('googleEventSnippet', eventSnippet.trim());
+    setCurrentEventSnippet(eventSnippet.trim());
+    
+    // Remove existing event snippet
+    const existingEventSnippet = document.querySelector('#google-event-snippet');
+    if (existingEventSnippet) {
+      existingEventSnippet.remove();
+    }
+
+    // Add new event snippet to head
+    const script = document.createElement('script');
+    script.id = 'google-event-snippet';
+    script.textContent = eventSnippet.trim();
+    document.head.appendChild(script);
+
+    setTimeout(() => {
+      setIsLoading(false);
+      setMessage('Snippet de evento do Google adicionado com sucesso!');
+    }, 1000);
+  };
+
+  const handleRemoveEventSnippet = () => {
+    setIsLoading(true);
+    
+    // Remove from localStorage
+    localStorage.removeItem('googleEventSnippet');
+    setCurrentEventSnippet('');
+    setEventSnippet('');
+    
+    // Remove from document head
+    const existingEventSnippet = document.querySelector('#google-event-snippet');
+    if (existingEventSnippet) {
+      existingEventSnippet.remove();
+    }
+
+    setTimeout(() => {
+      setIsLoading(false);
+      setMessage('Snippet de evento do Google removido com sucesso!');
+    }, 1000);
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -278,7 +339,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
         </div>
 
         {/* Tabs */}
-        <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
+        <div className="grid grid-cols-3 mb-6 bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => setActiveTab('analytics')}
             className={`flex-1 py-3 px-4 rounded-md font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
@@ -300,6 +361,17 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
           >
             <Code size={20} />
             HTML Personalizado
+          </button>
+          <button
+            onClick={() => setActiveTab('events')}
+            className={`flex-1 py-3 px-4 rounded-md font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
+              activeTab === 'events'
+                ? 'bg-white text-primary shadow-sm'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            <Shield size={20} />
+            Eventos Google
           </button>
         </div>
 
@@ -402,6 +474,59 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 <div className="bg-gray-100 p-4 rounded-lg">
                   <pre className="text-sm text-gray-700 whitespace-pre-wrap break-all">
                     {currentHtml}
+                  </pre>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Events Tab */}
+        {activeTab === 'events' && (
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">
+                Snippet de Evento do Google
+              </label>
+              <textarea
+                value={eventSnippet}
+                onChange={(e) => setEventSnippet(e.target.value)}
+                placeholder="Cole aqui o código do snippet de evento do Google (ex: gtag('event', 'conversion', {...}))"
+                rows={8}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-mono text-sm"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                Cole o código completo do snippet de evento do Google Ads ou Analytics
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleSaveEventSnippet}
+                disabled={isLoading}
+                className="flex-1 bg-accent hover:bg-green-600 text-white py-3 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                <Save size={20} />
+                {isLoading ? 'Salvando...' : 'Salvar e Ativar'}
+              </button>
+              <button
+                onClick={handleRemoveEventSnippet}
+                disabled={isLoading}
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                <Trash2 size={20} />
+                {isLoading ? 'Removendo...' : 'Remover Snippet'}
+              </button>
+            </div>
+
+            {currentEventSnippet && (
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Snippet de Evento Ativo
+                </label>
+                <div className="bg-gray-100 p-4 rounded-lg">
+                  <pre className="text-sm text-gray-700 whitespace-pre-wrap break-all">
+                    {currentEventSnippet}
                   </pre>
                 </div>
               </div>
