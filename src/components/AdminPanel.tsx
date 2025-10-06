@@ -30,6 +30,37 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   const ADMIN_PASSWORD = '88410205';
 
   useEffect(() => {
+    // Load and apply saved tags on component mount
+    const loadSavedTags = () => {
+      // Load Google Analytics tag
+      const savedTag = localStorage.getItem('googleAnalyticsTag');
+      if (savedTag) {
+        setCurrentTag(savedTag);
+        const match = savedTag.match(/id=([^"&]+)/);
+        if (match) {
+          setGoogleTagId(match[1]);
+        }
+      }
+
+      // Load custom HTML
+      const savedHtml = localStorage.getItem('customHtmlTag');
+      if (savedHtml) {
+        setCurrentHtml(savedHtml);
+        setCustomHtml(savedHtml);
+      }
+
+      // Load event snippet
+      const savedEventSnippet = localStorage.getItem('googleEventSnippet');
+      if (savedEventSnippet) {
+        setCurrentEventSnippet(savedEventSnippet);
+        setEventSnippet(savedEventSnippet);
+      }
+    };
+
+    loadSavedTags();
+  }, []);
+
+  useEffect(() => {
     // Load current Google tag from localStorage
     const savedTag = localStorage.getItem('googleAnalyticsTag');
     if (savedTag) {
@@ -92,24 +123,18 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     setCurrentTag(newTag);
     
     // Remove existing Google Analytics scripts
-    const existingScript = document.querySelector('script[src*="googletagmanager.com"]');
-    if (existingScript) {
-      existingScript.remove();
-    }
-    const existingConfig = document.querySelectorAll('script:not([src])');
-    existingConfig.forEach(script => {
-      if (script.textContent?.includes('gtag')) {
-        script.remove();
-      }
-    });
+    document.querySelectorAll('script[src*="googletagmanager.com"]').forEach(script => script.remove());
+    document.querySelectorAll('script[data-google-tag]').forEach(script => script.remove());
 
     // Add new tag
     const script1 = document.createElement('script');
     script1.async = true;
     script1.src = `https://www.googletagmanager.com/gtag/js?id=${googleTagId.trim()}`;
+    script1.setAttribute('data-google-tag', 'gtag-src');
     document.head.appendChild(script1);
 
     const script2 = document.createElement('script');
+    script2.setAttribute('data-google-tag', 'gtag-config');
     script2.textContent = `
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -118,9 +143,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     `;
     document.head.appendChild(script2);
 
+    // Force page reload to ensure proper tag detection
     setTimeout(() => {
       setIsLoading(false);
-      setMessage('Google Analytics configurado com sucesso!');
+      setMessage('Google Analytics configurado com sucesso! A página será recarregada para ativar o rastreamento.');
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     }, 1000);
   };
 
@@ -133,20 +162,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     setGoogleTagId('');
     
     // Remove from document head
-    const existingScript = document.querySelector('script[src*="googletagmanager.com"]');
-    if (existingScript) {
-      existingScript.remove();
-    }
-    const existingConfig = document.querySelectorAll('script:not([src])');
-    existingConfig.forEach(script => {
-      if (script.textContent?.includes('gtag')) {
-        script.remove();
-      }
-    });
+    document.querySelectorAll('script[src*="googletagmanager.com"]').forEach(script => script.remove());
+    document.querySelectorAll('script[data-google-tag]').forEach(script => script.remove());
 
     setTimeout(() => {
       setIsLoading(false);
-      setMessage('Google Analytics removido com sucesso!');
+      setMessage('Google Analytics removido com sucesso! A página será recarregada.');
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     }, 1000);
   };
 
