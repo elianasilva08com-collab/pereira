@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, Save, Trash2, Shield, Code } from 'lucide-react';
+import { Eye, EyeOff, Save, Trash2, Shield, Code, Target } from 'lucide-react';
 
 interface AdminPanelProps {
   onClose: () => void;
@@ -26,60 +26,25 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Updated password
   const ADMIN_PASSWORD = '88410205';
 
   useEffect(() => {
-    // Load and apply saved tags on component mount
-    const loadSavedTags = () => {
-      // Load Google Analytics tag
-      const savedTag = localStorage.getItem('googleAnalyticsTag');
-      if (savedTag) {
-        setCurrentTag(savedTag);
-        const match = savedTag.match(/id=([^"&]+)/);
-        if (match) {
-          setGoogleTagId(match[1]);
-        }
-      }
-
-      // Load custom HTML
-      const savedHtml = localStorage.getItem('customHtmlTag');
-      if (savedHtml) {
-        setCurrentHtml(savedHtml);
-        setCustomHtml(savedHtml);
-      }
-
-      // Load event snippet
-      const savedEventSnippet = localStorage.getItem('googleEventSnippet');
-      if (savedEventSnippet) {
-        setCurrentEventSnippet(savedEventSnippet);
-        setEventSnippet(savedEventSnippet);
-      }
-    };
-
-    loadSavedTags();
-  }, []);
-
-  useEffect(() => {
-    // Load current Google tag from localStorage
+    // Carregar dados salvos
     const savedTag = localStorage.getItem('googleAnalyticsTag');
     if (savedTag) {
       setCurrentTag(savedTag);
-      // Extract ID from saved tag
-      const match = savedTag.match(/id=([^"&]+)/);
+      const match = savedTag.match(/G-[A-Z0-9]+|AW-[0-9]+|GA-[A-Z0-9]+/);
       if (match) {
-        setGoogleTagId(match[1]);
+        setGoogleTagId(match[0]);
       }
     }
 
-    // Load current HTML from localStorage
     const savedHtml = localStorage.getItem('customHtmlTag');
     if (savedHtml) {
       setCurrentHtml(savedHtml);
       setCustomHtml(savedHtml);
     }
 
-    // Load current Event Snippet from localStorage
     const savedEventSnippet = localStorage.getItem('googleEventSnippet');
     if (savedEventSnippet) {
       setCurrentEventSnippet(savedEventSnippet);
@@ -97,80 +62,86 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     }
   };
 
-  const generateGoogleTag = (tagId: string) => {
-    return `<!-- Google tag (gtag.js) -->
+  const injectGoogleTag = (tagId: string) => {
+    // Remove tags existentes
+    document.querySelectorAll('script[src*="googletagmanager.com"]').forEach(script => script.remove());
+    document.querySelectorAll('script[data-gtag]').forEach(script => script.remove());
+
+    // Adiciona novo script do Google Tag Manager
+    const script1 = document.createElement('script');
+    script1.async = true;
+    script1.src = `https://www.googletagmanager.com/gtag/js?id=${tagId}`;
+    script1.setAttribute('data-gtag', 'src');
+    document.head.appendChild(script1);
+
+    // Adiciona configuração do gtag
+    const script2 = document.createElement('script');
+    script2.setAttribute('data-gtag', 'config');
+    script2.innerHTML = `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${tagId}');
+    `;
+    document.head.appendChild(script2);
+
+    // Força o carregamento
+    script1.onload = () => {
+      console.log('Google Tag carregado:', tagId);
+      // Dispara evento personalizado para confirmar carregamento
+      window.dispatchEvent(new CustomEvent('googleTagLoaded', { detail: { tagId } }));
+    };
+  };
+
+  const handleSaveTag = () => {
+    if (!googleTagId.trim()) {
+      setMessage('Por favor, insira um ID válido do Google Analytics/Ads');
+      return;
+    }
+
+    setIsLoading(true);
+    const tagId = googleTagId.trim();
+    
+    // Gera o código completo da tag
+    const fullTag = `<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=${tagId}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', '${tagId}');
 </script>`;
-  };
-
-  const handleSaveTag = () => {
-    if (!googleTagId.trim()) {
-      setMessage('Por favor, insira um ID válido do Google Analytics');
-      return;
-    }
-
-    setIsLoading(true);
-    const newTag = generateGoogleTag(googleTagId.trim());
     
-    // Save to localStorage
-    localStorage.setItem('googleAnalyticsTag', newTag);
-    setCurrentTag(newTag);
+    // Salva no localStorage
+    localStorage.setItem('googleAnalyticsTag', fullTag);
+    localStorage.setItem('googleTagId', tagId);
+    setCurrentTag(fullTag);
     
-    // Remove existing Google Analytics scripts
-    document.querySelectorAll('script[src*="googletagmanager.com"]').forEach(script => script.remove());
-    document.querySelectorAll('script[data-google-tag]').forEach(script => script.remove());
-
-    // Add new tag
-    const script1 = document.createElement('script');
-    script1.async = true;
-    script1.src = `https://www.googletagmanager.com/gtag/js?id=${googleTagId.trim()}`;
-    script1.setAttribute('data-google-tag', 'gtag-src');
-    document.head.appendChild(script1);
-
-    const script2 = document.createElement('script');
-    script2.setAttribute('data-google-tag', 'gtag-config');
-    script2.textContent = `
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '${googleTagId.trim()}');
-    `;
-    document.head.appendChild(script2);
-
-    // Force page reload to ensure proper tag detection
+    // Injeta a tag imediatamente
+    injectGoogleTag(tagId);
+    
     setTimeout(() => {
       setIsLoading(false);
-      setMessage('Google Analytics configurado com sucesso! A página será recarregada para ativar o rastreamento.');
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    }, 1000);
+      setMessage(`Google Tag ${tagId} instalado com sucesso! Verifique no Google Tag Assistant.`);
+    }, 2000);
   };
 
   const handleRemoveTag = () => {
     setIsLoading(true);
     
-    // Remove from localStorage
+    // Remove do localStorage
     localStorage.removeItem('googleAnalyticsTag');
+    localStorage.removeItem('googleTagId');
     setCurrentTag('');
     setGoogleTagId('');
     
-    // Remove from document head
+    // Remove do documento
     document.querySelectorAll('script[src*="googletagmanager.com"]').forEach(script => script.remove());
-    document.querySelectorAll('script[data-google-tag]').forEach(script => script.remove());
+    document.querySelectorAll('script[data-gtag]').forEach(script => script.remove());
 
     setTimeout(() => {
       setIsLoading(false);
-      setMessage('Google Analytics removido com sucesso! A página será recarregada.');
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      setMessage('Google Tag removido com sucesso!');
     }, 1000);
   };
 
@@ -182,62 +153,65 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
     setIsLoading(true);
     
-    // Save to localStorage
+    // Salva no localStorage
     localStorage.setItem('customHtmlTag', customHtml.trim());
     setCurrentHtml(customHtml.trim());
     
-    // Remove existing custom HTML
-    const existingCustom = document.querySelector('#custom-html-tag');
+    // Remove HTML customizado existente
+    const existingCustom = document.querySelector('#custom-html-injection');
     if (existingCustom) {
       existingCustom.remove();
     }
 
-    // Add new HTML to head
-    const div = document.createElement('div');
-    div.id = 'custom-html-tag';
-    div.innerHTML = customHtml.trim();
+    // Cria container para o HTML customizado
+    const container = document.createElement('div');
+    container.id = 'custom-html-injection';
+    container.innerHTML = customHtml.trim();
     
-    // Move all script and style elements to head
-    const scripts = div.querySelectorAll('script');
-    const styles = div.querySelectorAll('style');
-    
+    // Move scripts para o head
+    const scripts = container.querySelectorAll('script');
     scripts.forEach(script => {
       const newScript = document.createElement('script');
       if (script.src) {
         newScript.src = script.src;
+        newScript.async = true;
       }
-      if (script.textContent) {
-        newScript.textContent = script.textContent;
+      if (script.innerHTML) {
+        newScript.innerHTML = script.innerHTML;
       }
-      // Copy all attributes
+      // Copia todos os atributos
       Array.from(script.attributes).forEach(attr => {
-        newScript.setAttribute(attr.name, attr.value);
+        if (attr.name !== 'src' && attr.name !== 'innerHTML') {
+          newScript.setAttribute(attr.name, attr.value);
+        }
       });
       document.head.appendChild(newScript);
     });
 
+    // Move styles para o head
+    const styles = container.querySelectorAll('style');
     styles.forEach(style => {
       const newStyle = document.createElement('style');
-      newStyle.textContent = style.textContent;
+      newStyle.innerHTML = style.innerHTML;
       document.head.appendChild(newStyle);
     });
 
     setTimeout(() => {
       setIsLoading(false);
-      setMessage('Código HTML personalizado adicionado com sucesso!');
+      setMessage('Código HTML personalizado instalado com sucesso!');
     }, 1000);
   };
 
   const handleRemoveHtml = () => {
     setIsLoading(true);
     
-    // Remove from localStorage
+    // Remove do localStorage
     localStorage.removeItem('customHtmlTag');
     setCurrentHtml('');
     setCustomHtml('');
     
-    // Remove from document head
-    const existingCustom = document.querySelector('#custom-html-tag');
+    // Remove do documento
+    const existingCustom = document.querySelector('#custom-html-injection');
     if (existingCustom) {
       existingCustom.remove();
     }
@@ -256,40 +230,40 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
     setIsLoading(true);
     
-    // Save to localStorage
+    // Salva no localStorage
     localStorage.setItem('googleEventSnippet', eventSnippet.trim());
     setCurrentEventSnippet(eventSnippet.trim());
     
-    // Remove existing event snippet
-    const existingEventSnippet = document.querySelector('#google-event-snippet');
-    if (existingEventSnippet) {
-      existingEventSnippet.remove();
+    // Remove snippet existente
+    const existingSnippet = document.querySelector('#google-event-snippet');
+    if (existingSnippet) {
+      existingSnippet.remove();
     }
 
-    // Add new event snippet to head
+    // Adiciona novo snippet
     const script = document.createElement('script');
     script.id = 'google-event-snippet';
-    script.textContent = eventSnippet.trim();
+    script.innerHTML = eventSnippet.trim();
     document.head.appendChild(script);
 
     setTimeout(() => {
       setIsLoading(false);
-      setMessage('Snippet de evento do Google adicionado com sucesso!');
+      setMessage('Snippet de evento do Google instalado com sucesso!');
     }, 1000);
   };
 
   const handleRemoveEventSnippet = () => {
     setIsLoading(true);
     
-    // Remove from localStorage
+    // Remove do localStorage
     localStorage.removeItem('googleEventSnippet');
     setCurrentEventSnippet('');
     setEventSnippet('');
     
-    // Remove from document head
-    const existingEventSnippet = document.querySelector('#google-event-snippet');
-    if (existingEventSnippet) {
-      existingEventSnippet.remove();
+    // Remove do documento
+    const existingSnippet = document.querySelector('#google-event-snippet');
+    if (existingSnippet) {
+      existingSnippet.remove();
     }
 
     setTimeout(() => {
@@ -300,8 +274,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
   if (!isAuthenticated) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-xl p-8 max-w-md w-full">
           <div className="text-center mb-6">
             <Shield className="w-16 h-16 text-primary mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-dark">Painel Administrativo</h2>
@@ -317,7 +291,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 placeholder="Senha de administrador"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none pr-12"
                 required
-                autoComplete="off"
+                autoComplete="new-password"
               />
               <button
                 type="button"
@@ -366,7 +340,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
         <div className="grid grid-cols-3 mb-6 bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => setActiveTab('analytics')}
-            className={`flex-1 py-3 px-4 rounded-md font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
+            className={`py-3 px-4 rounded-md font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
               activeTab === 'analytics'
                 ? 'bg-white text-primary shadow-sm'
                 : 'text-gray-600 hover:text-gray-800'
@@ -377,7 +351,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
           </button>
           <button
             onClick={() => setActiveTab('html')}
-            className={`flex-1 py-3 px-4 rounded-md font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
+            className={`py-3 px-4 rounded-md font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
               activeTab === 'html'
                 ? 'bg-white text-primary shadow-sm'
                 : 'text-gray-600 hover:text-gray-800'
@@ -388,13 +362,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
           </button>
           <button
             onClick={() => setActiveTab('events')}
-            className={`flex-1 py-3 px-4 rounded-md font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
+            className={`py-3 px-4 rounded-md font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
               activeTab === 'events'
                 ? 'bg-white text-primary shadow-sm'
                 : 'text-gray-600 hover:text-gray-800'
             }`}
           >
-            <Shield size={20} />
+            <Target size={20} />
             Eventos Google
           </button>
         </div>
@@ -410,11 +384,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 type="text"
                 value={googleTagId}
                 onChange={(e) => setGoogleTagId(e.target.value)}
-                placeholder="Ex: AW-17510960317 ou GA-XXXXXXXXX"
+                placeholder="Ex: G-XXXXXXXXXX ou AW-XXXXXXXXX"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
               />
               <p className="text-sm text-gray-500 mt-1">
-                Cole aqui o ID do seu Google Analytics ou Google Ads
+                Cole aqui o ID do seu Google Analytics (G-XXXXXXXXXX) ou Google Ads (AW-XXXXXXXXX)
               </p>
             </div>
 
@@ -422,10 +396,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               <button
                 onClick={handleSaveTag}
                 disabled={isLoading}
-                className="flex-1 bg-accent hover:bg-green-600 text-white py-3 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
+                className="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <Save size={20} />
-                {isLoading ? 'Salvando...' : 'Salvar e Ativar'}
+                {isLoading ? 'Instalando...' : 'Instalar Tag'}
               </button>
               <button
                 onClick={handleRemoveTag}
@@ -440,10 +414,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
             {currentTag && (
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Código Google Analytics Ativo
+                  ✅ Google Tag Ativa no Site
                 </label>
-                <div className="bg-gray-100 p-4 rounded-lg">
-                  <pre className="text-sm text-gray-700 whitespace-pre-wrap break-all">
+                <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                  <pre className="text-sm text-green-800 whitespace-pre-wrap break-all">
                     {currentTag}
                   </pre>
                 </div>
@@ -462,7 +436,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               <textarea
                 value={customHtml}
                 onChange={(e) => setCustomHtml(e.target.value)}
-                placeholder="Cole aqui qualquer código HTML (scripts, meta tags, etc.)"
+                placeholder="Cole aqui qualquer código HTML (scripts, meta tags, Facebook Pixel, etc.)"
                 rows={8}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-mono text-sm"
               />
@@ -475,10 +449,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               <button
                 onClick={handleSaveHtml}
                 disabled={isLoading}
-                className="flex-1 bg-accent hover:bg-green-600 text-white py-3 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
+                className="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <Save size={20} />
-                {isLoading ? 'Salvando...' : 'Salvar e Ativar'}
+                {isLoading ? 'Instalando...' : 'Instalar HTML'}
               </button>
               <button
                 onClick={handleRemoveHtml}
@@ -493,10 +467,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
             {currentHtml && (
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Código HTML Ativo
+                  ✅ HTML Personalizado Ativo no Site
                 </label>
-                <div className="bg-gray-100 p-4 rounded-lg">
-                  <pre className="text-sm text-gray-700 whitespace-pre-wrap break-all">
+                <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                  <pre className="text-sm text-green-800 whitespace-pre-wrap break-all">
                     {currentHtml}
                   </pre>
                 </div>
@@ -528,10 +502,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               <button
                 onClick={handleSaveEventSnippet}
                 disabled={isLoading}
-                className="flex-1 bg-accent hover:bg-green-600 text-white py-3 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
+                className="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <Save size={20} />
-                {isLoading ? 'Salvando...' : 'Salvar e Ativar'}
+                {isLoading ? 'Instalando...' : 'Instalar Evento'}
               </button>
               <button
                 onClick={handleRemoveEventSnippet}
@@ -539,17 +513,17 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <Trash2 size={20} />
-                {isLoading ? 'Removendo...' : 'Remover Snippet'}
+                {isLoading ? 'Removendo...' : 'Remover Evento'}
               </button>
             </div>
 
             {currentEventSnippet && (
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Snippet de Evento Ativo
+                  ✅ Snippet de Evento Ativo no Site
                 </label>
-                <div className="bg-gray-100 p-4 rounded-lg">
-                  <pre className="text-sm text-gray-700 whitespace-pre-wrap break-all">
+                <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                  <pre className="text-sm text-green-800 whitespace-pre-wrap break-all">
                     {currentEventSnippet}
                   </pre>
                 </div>
@@ -561,8 +535,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
         {message && (
           <div className={`mt-6 p-4 rounded-lg text-center font-medium ${
             message.includes('sucesso') 
-              ? 'bg-green-100 text-green-800' 
-              : 'bg-red-100 text-red-800'
+              ? 'bg-green-100 text-green-800 border border-green-200' 
+              : 'bg-red-100 text-red-800 border border-red-200'
           }`}>
             {message}
           </div>

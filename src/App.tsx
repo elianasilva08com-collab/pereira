@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Services from './components/Services';
@@ -12,72 +12,93 @@ import Footer from './components/Footer';
 import WhatsAppFloat from './components/WhatsAppFloat';
 
 function App() {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   useEffect(() => {
-    // Load saved Google Analytics tag on app start
-    const savedTag = localStorage.getItem('googleAnalyticsTag');
-    if (savedTag) {
-      const match = savedTag.match(/id=([^"&]+)/);
-      if (match) {
-        const tagId = match[1];
+    const loadSavedTags = () => {
+      // Carrega Google Analytics/Ads tag
+      const savedTagId = localStorage.getItem('googleTagId');
+      if (savedTagId && !document.querySelector(`script[src*="${savedTagId}"]`)) {
+        console.log('Carregando Google Tag:', savedTagId);
         
-        // Check if tag is already loaded
-        if (!document.querySelector(`script[src*="${tagId}"]`)) {
-          // Add Google Analytics script
-          const script1 = document.createElement('script');
-          script1.async = true;
-          script1.src = `https://www.googletagmanager.com/gtag/js?id=${tagId}`;
-          script1.setAttribute('data-google-tag', 'gtag-src');
-          document.head.appendChild(script1);
+        // Script do Google Tag Manager
+        const script1 = document.createElement('script');
+        script1.async = true;
+        script1.src = `https://www.googletagmanager.com/gtag/js?id=${savedTagId}`;
+        script1.setAttribute('data-gtag', 'src');
+        document.head.appendChild(script1);
 
-          const script2 = document.createElement('script');
-          script2.setAttribute('data-google-tag', 'gtag-config');
-          script2.textContent = `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${tagId}');
-          `;
-          document.head.appendChild(script2);
-        }
+        // Configuração do gtag
+        const script2 = document.createElement('script');
+        script2.setAttribute('data-gtag', 'config');
+        script2.innerHTML = `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${savedTagId}');
+        `;
+        document.head.appendChild(script2);
+
+        script1.onload = () => {
+          console.log('Google Tag carregado com sucesso:', savedTagId);
+        };
       }
-    }
 
-    // Load saved custom HTML
-    const savedHtml = localStorage.getItem('customHtmlTag');
-    if (savedHtml && !document.querySelector('#custom-html-tag')) {
-      const div = document.createElement('div');
-      div.id = 'custom-html-tag';
-      div.innerHTML = savedHtml;
-      
-      // Move scripts and styles to head
-      const scripts = div.querySelectorAll('script');
-      const styles = div.querySelectorAll('style');
-      
-      scripts.forEach(script => {
-        const newScript = document.createElement('script');
-        if (script.src) newScript.src = script.src;
-        if (script.textContent) newScript.textContent = script.textContent;
-        Array.from(script.attributes).forEach(attr => {
-          newScript.setAttribute(attr.name, attr.value);
+      // Carrega HTML personalizado
+      const savedHtml = localStorage.getItem('customHtmlTag');
+      if (savedHtml && !document.querySelector('#custom-html-injection')) {
+        console.log('Carregando HTML personalizado');
+        
+        const container = document.createElement('div');
+        container.id = 'custom-html-injection';
+        container.innerHTML = savedHtml;
+        
+        // Move scripts para o head
+        const scripts = container.querySelectorAll('script');
+        scripts.forEach(script => {
+          const newScript = document.createElement('script');
+          if (script.src) {
+            newScript.src = script.src;
+            newScript.async = true;
+          }
+          if (script.innerHTML) {
+            newScript.innerHTML = script.innerHTML;
+          }
+          Array.from(script.attributes).forEach(attr => {
+            if (attr.name !== 'src' && attr.name !== 'innerHTML') {
+              newScript.setAttribute(attr.name, attr.value);
+            }
+          });
+          document.head.appendChild(newScript);
         });
-        document.head.appendChild(newScript);
-      });
 
-      styles.forEach(style => {
-        const newStyle = document.createElement('style');
-        newStyle.textContent = style.textContent;
-        document.head.appendChild(newStyle);
-      });
-    }
+        // Move styles para o head
+        const styles = container.querySelectorAll('style');
+        styles.forEach(style => {
+          const newStyle = document.createElement('style');
+          newStyle.innerHTML = style.innerHTML;
+          document.head.appendChild(newStyle);
+        });
+      }
 
-    // Load saved event snippet
-    const savedEventSnippet = localStorage.getItem('googleEventSnippet');
-    if (savedEventSnippet && !document.querySelector('#google-event-snippet')) {
-      const script = document.createElement('script');
-      script.id = 'google-event-snippet';
-      script.textContent = savedEventSnippet;
-      document.head.appendChild(script);
-    }
+      // Carrega snippet de eventos
+      const savedEventSnippet = localStorage.getItem('googleEventSnippet');
+      if (savedEventSnippet && !document.querySelector('#google-event-snippet')) {
+        console.log('Carregando snippet de eventos');
+        
+        const script = document.createElement('script');
+        script.id = 'google-event-snippet';
+        script.innerHTML = savedEventSnippet;
+        document.head.appendChild(script);
+      }
+
+      setIsLoaded(true);
+    };
+
+    // Carrega as tags após um pequeno delay para garantir que o DOM esteja pronto
+    const timer = setTimeout(loadSavedTags, 100);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   return (
