@@ -30,13 +30,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
   useEffect(() => {
     // Carregar dados salvos
-    const savedTag = localStorage.getItem('googleAnalyticsTag');
-    if (savedTag) {
-      setCurrentTag(savedTag);
-      const match = savedTag.match(/G-[A-Z0-9]+|AW-[0-9]+|GA-[A-Z0-9]+/);
-      if (match) {
-        setGoogleTagId(match[0]);
-      }
+    const savedTagId = localStorage.getItem('googleTagId');
+    if (savedTagId) {
+      setGoogleTagId(savedTagId);
+      setCurrentTag(savedTagId);
     }
 
     const savedHtml = localStorage.getItem('customHtmlTag');
@@ -54,104 +51,124 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Tentativa de login com senha:', password);
     if (password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
-      setMessage('');
+      setMessage('Login realizado com sucesso!');
+      console.log('Login autorizado');
     } else {
-      setMessage('Senha incorreta!');
+      setMessage('Senha incorreta! Tente novamente.');
+      console.log('Senha incorreta');
     }
   };
 
-  const injectGoogleTag = (tagId: string) => {
-    // Remove tags existentes
-    document.querySelectorAll('script[src*="googletagmanager.com"]').forEach(script => script.remove());
-    document.querySelectorAll('script[data-gtag]').forEach(script => script.remove());
+  const removeExistingGoogleTags = () => {
+    // Remove scripts do Google Tag Manager
+    const existingScripts = document.querySelectorAll('script[src*="googletagmanager.com"], script[data-google-tag]');
+    existingScripts.forEach(script => {
+      console.log('Removendo script existente:', script);
+      script.remove();
+    });
+  };
 
-    // Adiciona novo script do Google Tag Manager
+  const injectGoogleTag = (tagId: string) => {
+    console.log('Injetando Google Tag:', tagId);
+    
+    // Remove tags existentes primeiro
+    removeExistingGoogleTags();
+
+    // Cria o script do Google Tag Manager
     const script1 = document.createElement('script');
     script1.async = true;
     script1.src = `https://www.googletagmanager.com/gtag/js?id=${tagId}`;
-    script1.setAttribute('data-gtag', 'src');
+    script1.setAttribute('data-google-tag', 'gtag-src');
     document.head.appendChild(script1);
 
-    // Adiciona configuração do gtag
+    // Cria o script de configuração
     const script2 = document.createElement('script');
-    script2.setAttribute('data-gtag', 'config');
+    script2.setAttribute('data-google-tag', 'gtag-config');
     script2.innerHTML = `
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', '${tagId}');
+      console.log('Google Tag configurado:', '${tagId}');
     `;
     document.head.appendChild(script2);
 
-    // Força o carregamento
+    // Confirma carregamento
     script1.onload = () => {
-      console.log('Google Tag carregado:', tagId);
-      // Dispara evento personalizado para confirmar carregamento
-      window.dispatchEvent(new CustomEvent('googleTagLoaded', { detail: { tagId } }));
+      console.log('✅ Google Tag carregado com sucesso:', tagId);
+      
+      // Dispara evento de teste
+      if (window.gtag) {
+        window.gtag('event', 'page_view', {
+          page_title: 'Cacambas Pereira',
+          page_location: window.location.href
+        });
+        console.log('✅ Evento de teste enviado');
+      }
+    };
+
+    script1.onerror = () => {
+      console.error('❌ Erro ao carregar Google Tag:', tagId);
     };
   };
 
   const handleSaveTag = () => {
     if (!googleTagId.trim()) {
-      setMessage('Por favor, insira um ID válido do Google Analytics/Ads');
+      setMessage('❌ Por favor, insira um ID válido do Google Analytics/Ads');
       return;
     }
 
     setIsLoading(true);
     const tagId = googleTagId.trim();
     
-    // Gera o código completo da tag
-    const fullTag = `<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=${tagId}"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', '${tagId}');
-</script>`;
+    console.log('Salvando Google Tag:', tagId);
     
     // Salva no localStorage
-    localStorage.setItem('googleAnalyticsTag', fullTag);
     localStorage.setItem('googleTagId', tagId);
-    setCurrentTag(fullTag);
+    setCurrentTag(tagId);
     
     // Injeta a tag imediatamente
     injectGoogleTag(tagId);
     
     setTimeout(() => {
       setIsLoading(false);
-      setMessage(`Google Tag ${tagId} instalado com sucesso! Verifique no Google Tag Assistant.`);
+      setMessage(`✅ Google Tag ${tagId} instalado com sucesso! Verifique o console do navegador.`);
+      console.log('Google Tag salvo e injetado:', tagId);
     }, 2000);
   };
 
   const handleRemoveTag = () => {
     setIsLoading(true);
     
+    console.log('Removendo Google Tag');
+    
     // Remove do localStorage
-    localStorage.removeItem('googleAnalyticsTag');
     localStorage.removeItem('googleTagId');
     setCurrentTag('');
     setGoogleTagId('');
     
     // Remove do documento
-    document.querySelectorAll('script[src*="googletagmanager.com"]').forEach(script => script.remove());
-    document.querySelectorAll('script[data-gtag]').forEach(script => script.remove());
+    removeExistingGoogleTags();
 
     setTimeout(() => {
       setIsLoading(false);
-      setMessage('Google Tag removido com sucesso!');
+      setMessage('✅ Google Tag removido com sucesso!');
+      console.log('Google Tag removido');
     }, 1000);
   };
 
   const handleSaveHtml = () => {
     if (!customHtml.trim()) {
-      setMessage('Por favor, insira um código HTML válido');
+      setMessage('❌ Por favor, insira um código HTML válido');
       return;
     }
 
     setIsLoading(true);
+    
+    console.log('Salvando HTML personalizado');
     
     // Salva no localStorage
     localStorage.setItem('customHtmlTag', customHtml.trim());
@@ -179,13 +196,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
       if (script.innerHTML) {
         newScript.innerHTML = script.innerHTML;
       }
-      // Copia todos os atributos
       Array.from(script.attributes).forEach(attr => {
         if (attr.name !== 'src' && attr.name !== 'innerHTML') {
           newScript.setAttribute(attr.name, attr.value);
         }
       });
       document.head.appendChild(newScript);
+      console.log('Script HTML personalizado adicionado:', newScript);
     });
 
     // Move styles para o head
@@ -194,16 +211,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
       const newStyle = document.createElement('style');
       newStyle.innerHTML = style.innerHTML;
       document.head.appendChild(newStyle);
+      console.log('Style HTML personalizado adicionado:', newStyle);
     });
 
     setTimeout(() => {
       setIsLoading(false);
-      setMessage('Código HTML personalizado instalado com sucesso!');
+      setMessage('✅ Código HTML personalizado instalado com sucesso!');
+      console.log('HTML personalizado salvo e injetado');
     }, 1000);
   };
 
   const handleRemoveHtml = () => {
     setIsLoading(true);
+    
+    console.log('Removendo HTML personalizado');
     
     // Remove do localStorage
     localStorage.removeItem('customHtmlTag');
@@ -218,17 +239,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
     setTimeout(() => {
       setIsLoading(false);
-      setMessage('Código HTML personalizado removido com sucesso!');
+      setMessage('✅ Código HTML personalizado removido com sucesso!');
+      console.log('HTML personalizado removido');
     }, 1000);
   };
 
   const handleSaveEventSnippet = () => {
     if (!eventSnippet.trim()) {
-      setMessage('Por favor, insira um código de evento válido');
+      setMessage('❌ Por favor, insira um código de evento válido');
       return;
     }
 
     setIsLoading(true);
+    
+    console.log('Salvando snippet de evento');
     
     // Salva no localStorage
     localStorage.setItem('googleEventSnippet', eventSnippet.trim());
@@ -245,15 +269,19 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     script.id = 'google-event-snippet';
     script.innerHTML = eventSnippet.trim();
     document.head.appendChild(script);
+    console.log('Snippet de evento adicionado:', script);
 
     setTimeout(() => {
       setIsLoading(false);
-      setMessage('Snippet de evento do Google instalado com sucesso!');
+      setMessage('✅ Snippet de evento do Google instalado com sucesso!');
+      console.log('Snippet de evento salvo e injetado');
     }, 1000);
   };
 
   const handleRemoveEventSnippet = () => {
     setIsLoading(true);
+    
+    console.log('Removendo snippet de evento');
     
     // Remove do localStorage
     localStorage.removeItem('googleEventSnippet');
@@ -268,10 +296,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
     setTimeout(() => {
       setIsLoading(false);
-      setMessage('Snippet de evento do Google removido com sucesso!');
+      setMessage('✅ Snippet de evento do Google removido com sucesso!');
+      console.log('Snippet de evento removido');
     }, 1000);
   };
 
+  // Tela de login
   if (!isAuthenticated) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -287,11 +317,14 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  console.log('Senha digitada:', e.target.value);
+                }}
                 placeholder="Senha de administrador"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none pr-12"
                 required
-                autoComplete="new-password"
+                autoComplete="off"
               />
               <button
                 type="button"
@@ -303,7 +336,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
             </div>
 
             {message && (
-              <p className="text-red-500 text-sm text-center">{message}</p>
+              <p className={`text-sm text-center ${message.includes('sucesso') ? 'text-green-600' : 'text-red-500'}`}>
+                {message}
+              </p>
             )}
 
             <div className="flex gap-3">
@@ -322,11 +357,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               </button>
             </div>
           </form>
+
+          <div className="mt-4 text-center text-xs text-gray-500">
+            Senha: 88410205
+          </div>
         </div>
       </div>
     );
   }
 
+  // Painel principal
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
@@ -417,9 +457,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   ✅ Google Tag Ativa no Site
                 </label>
                 <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
-                  <pre className="text-sm text-green-800 whitespace-pre-wrap break-all">
-                    {currentTag}
-                  </pre>
+                  <p className="text-sm text-green-800 font-mono">
+                    Tag ID: {currentTag}
+                  </p>
+                  <p className="text-xs text-green-600 mt-2">
+                    Abra o Console do navegador (F12) para ver os logs de carregamento
+                  </p>
                 </div>
               </div>
             )}
@@ -469,7 +512,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 <label className="block text-sm font-bold text-gray-700 mb-2">
                   ✅ HTML Personalizado Ativo no Site
                 </label>
-                <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                <div className="bg-green-50 border border-green-200 p-4 rounded-lg max-h-40 overflow-y-auto">
                   <pre className="text-sm text-green-800 whitespace-pre-wrap break-all">
                     {currentHtml}
                   </pre>
@@ -522,7 +565,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 <label className="block text-sm font-bold text-gray-700 mb-2">
                   ✅ Snippet de Evento Ativo no Site
                 </label>
-                <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                <div className="bg-green-50 border border-green-200 p-4 rounded-lg max-h-40 overflow-y-auto">
                   <pre className="text-sm text-green-800 whitespace-pre-wrap break-all">
                     {currentEventSnippet}
                   </pre>
@@ -534,7 +577,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
         {message && (
           <div className={`mt-6 p-4 rounded-lg text-center font-medium ${
-            message.includes('sucesso') 
+            message.includes('✅') 
               ? 'bg-green-100 text-green-800 border border-green-200' 
               : 'bg-red-100 text-red-800 border border-red-200'
           }`}>
@@ -554,5 +597,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     </div>
   );
 };
+
+// Adiciona declaração global para gtag
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+    dataLayer: any[];
+  }
+}
 
 export default AdminPanel;

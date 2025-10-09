@@ -16,38 +16,52 @@ function App() {
 
   useEffect(() => {
     const loadSavedTags = () => {
-      // Carrega Google Analytics/Ads tag
+      console.log('🚀 Carregando tags salvas...');
+      
+      // Carrega Google Tag
       const savedTagId = localStorage.getItem('googleTagId');
-      if (savedTagId && !document.querySelector(`script[src*="${savedTagId}"]`)) {
-        console.log('Carregando Google Tag:', savedTagId);
+      if (savedTagId) {
+        console.log('📊 Carregando Google Tag:', savedTagId);
         
-        // Script do Google Tag Manager
+        // Remove tags existentes
+        const existingScripts = document.querySelectorAll('script[data-google-tag]');
+        existingScripts.forEach(script => script.remove());
+        
+        // Adiciona nova tag
         const script1 = document.createElement('script');
         script1.async = true;
         script1.src = `https://www.googletagmanager.com/gtag/js?id=${savedTagId}`;
-        script1.setAttribute('data-gtag', 'src');
+        script1.setAttribute('data-google-tag', 'gtag-src');
         document.head.appendChild(script1);
 
-        // Configuração do gtag
         const script2 = document.createElement('script');
-        script2.setAttribute('data-gtag', 'config');
+        script2.setAttribute('data-google-tag', 'gtag-config');
         script2.innerHTML = `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', '${savedTagId}');
+          console.log('✅ Google Tag configurado automaticamente:', '${savedTagId}');
         `;
         document.head.appendChild(script2);
 
         script1.onload = () => {
-          console.log('Google Tag carregado com sucesso:', savedTagId);
+          console.log('✅ Google Tag carregado automaticamente:', savedTagId);
         };
+      } else {
+        console.log('ℹ️ Nenhuma Google Tag salva encontrada');
       }
 
       // Carrega HTML personalizado
       const savedHtml = localStorage.getItem('customHtmlTag');
-      if (savedHtml && !document.querySelector('#custom-html-injection')) {
-        console.log('Carregando HTML personalizado');
+      if (savedHtml) {
+        console.log('🎨 Carregando HTML personalizado');
+        
+        // Remove HTML existente
+        const existingCustom = document.querySelector('#custom-html-injection');
+        if (existingCustom) {
+          existingCustom.remove();
+        }
         
         const container = document.createElement('div');
         container.id = 'custom-html-injection';
@@ -79,26 +93,36 @@ function App() {
           newStyle.innerHTML = style.innerHTML;
           document.head.appendChild(newStyle);
         });
+      } else {
+        console.log('ℹ️ Nenhum HTML personalizado salvo encontrado');
       }
 
       // Carrega snippet de eventos
       const savedEventSnippet = localStorage.getItem('googleEventSnippet');
-      if (savedEventSnippet && !document.querySelector('#google-event-snippet')) {
-        console.log('Carregando snippet de eventos');
+      if (savedEventSnippet) {
+        console.log('🎯 Carregando snippet de eventos');
+        
+        // Remove snippet existente
+        const existingSnippet = document.querySelector('#google-event-snippet');
+        if (existingSnippet) {
+          existingSnippet.remove();
+        }
         
         const script = document.createElement('script');
         script.id = 'google-event-snippet';
         script.innerHTML = savedEventSnippet;
         document.head.appendChild(script);
+      } else {
+        console.log('ℹ️ Nenhum snippet de evento salvo encontrado');
       }
 
       setIsLoaded(true);
+      console.log('✅ Carregamento de tags concluído');
     };
 
-    // Carrega as tags após um pequeno delay para garantir que o DOM esteja pronto
-    const timer = setTimeout(loadSavedTags, 100);
+    // Carrega as tags imediatamente
+    loadSavedTags();
     
-    return () => clearTimeout(timer);
   }, []);
 
   return (
