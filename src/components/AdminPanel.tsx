@@ -338,11 +338,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
             </div>
           </form>
 
-          <div className="mt-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-sm text-blue-800 text-center">
-              <strong>Senha:</strong> 88410205
-            </p>
-          </div>
         </div>
       </div>
     );
