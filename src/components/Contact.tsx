@@ -78,7 +78,7 @@ Número: ${formData.number}
 Aguardo retorno. Obrigado!`;
 
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://api.whatsapp.com/send/?phone=551152951951&text=${encodedMessage}&type=phone_number&app_absent=0`;
+    const whatsappUrl = `https://api.whatsapp.com/send/?phone=551148637094&text=${encodedMessage}&type=phone_number&app_absent=0`;
     
     window.open(whatsappUrl, '_blank');
   };
@@ -87,7 +87,7 @@ Aguardo retorno. Obrigado!`;
     {
       icon: Phone,
       title: 'Telefones',
-      content: ['(11) 5295-1951'],
+      content: ['(11) 4863-7094'],
     },
     {
       icon: Mail,
