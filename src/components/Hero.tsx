@@ -39,7 +39,7 @@ const Hero: React.FC = () => {
             Solicitar Orçamento
           </button>
           <a
-            href="https://api.whatsapp.com/send/?phone=551148637094&text=Ol%C3%A1%21+Gostaria+de+solicitar+um+or%C3%A7amento+para+os+servi%C3%A7os+da+Cacambas+Pereira.&type=phone_number&app_absent=0"
+            href="https://api.whatsapp.com/send/?phone=551151927893&text=Ol%C3%A1%21+Gostaria+de+solicitar+um+or%C3%A7amento+para+os+servi%C3%A7os+da+Cacambas+Pereira.&type=phone_number&app_absent=0"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl w-full sm:w-auto inline-flex items-center justify-center gap-2"
