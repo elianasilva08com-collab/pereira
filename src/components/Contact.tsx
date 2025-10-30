@@ -87,7 +87,7 @@ Aguardo retorno. Obrigado!`;
     {
       icon: Phone,
       title: 'Telefones',
-      content: ['(11) 5192-7893'],
+      content: ['(11) 4863-7094'],
     },
     {
       icon: Mail,
