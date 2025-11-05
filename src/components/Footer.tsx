@@ -110,7 +110,6 @@ export const Footer: React.FC = () => {
 
         <div className="border-t border-gray-700 pt-8 text-center text-gray-400 text-sm">
           <p>&copy; 2024 Cacambas Pereira - Todos os direitos reservados</p>
-          <p className="mt-2">CNPJ: 17.165.880/0001-59</p>
         </div>
       </div>
     </footer>

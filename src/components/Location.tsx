@@ -24,18 +24,6 @@ const Location: React.FC = () => {
         <div className="mt-8 bg-white p-6 rounded-xl shadow-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-xl font-bold text-primary mb-4">Endereço Completo</h3>
-              <p className="text-gray-700 mb-2">
-                <strong>Rua Da Paz, 1234</strong>
-              </p>
-              <p className="text-gray-700 mb-2">
-                Chácara Santo Antônio (Zona Sul)
-              </p>
-              <p className="text-gray-700 mb-4">
-                São Paulo - SP, CEP: 04713-001
-              </p>
-            </div>
-            <div>
               <h3 className="text-xl font-bold text-primary mb-4">Como Chegar</h3>
               <p className="text-gray-700 mb-2">
                 Localizada no bairro Chácara Santo Antônio, zona sul de São Paulo.

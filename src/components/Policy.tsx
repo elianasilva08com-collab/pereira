@@ -3,18 +3,6 @@ import React from 'react';
 const Policy: React.FC = () => {
   const policyData = [
     {
-      title: 'Dados da Empresa',
-      content: [
-        'Razão Social: Rs Pereira Transportes LTDA',
-        'Nome Fantasia: Cacambas Pereira',
-        'CNPJ: 17.165.880/0001-59',
-        'Inscrição Estadual SP: 123.396.719.112',
-        'Porte: Micro Empresa',
-        'Natureza Jurídica: Sociedade Empresária Limitada',
-        'Capital Social: R$ 250.000,00',
-      ],
-    },
-    {
       title: 'Política de Qualidade',
       content: [
         'Comprometemo-nos a oferecer serviços de transporte, locação e coleta de entulhos com qualidade, segurança e responsabilidade ambiental, superando as expectativas dos nossos clientes.',
