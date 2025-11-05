@@ -2,7 +2,7 @@ import React from 'react';
 import { Facebook, Instagram, MessageCircle, Phone, Mail, MapPin } from 'lucide-react';
 import AdminAccess from './AdminAccess';
 
-const Footer: React.FC = () => {
+export const Footer: React.FC = () => {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -116,5 +116,3 @@ const Footer: React.FC = () => {
     </footer>
   );
 };
-
-export default Footer;

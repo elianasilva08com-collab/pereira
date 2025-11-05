@@ -8,7 +8,7 @@ import Process from './components/Process';
 import Contact from './components/Contact';
 import Location from './components/Location';
 import Policy from './components/Policy';
-import Footer from './components/Footer';
+import { Footer } from './components/Footer';
 import WhatsAppFloat from './components/WhatsAppFloat';
 
 function App() {
