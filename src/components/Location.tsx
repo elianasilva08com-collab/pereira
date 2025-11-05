@@ -22,7 +22,7 @@ const Location: React.FC = () => {
         </div>
         
         <div className="mt-8 bg-white p-6 rounded-xl shadow-lg">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <h3 className="text-xl font-bold text-primary mb-4">Como Chegar</h3>
               <p className="text-gray-700 mb-2">
@@ -42,6 +42,23 @@ const Location: React.FC = () => {
                 </svg>
                 Ver Rotas no Google Maps
               </a>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-primary mb-4">Dados da Empresa</h3>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm font-semibold text-gray-600 mb-1">Razão Social</p>
+                  <p className="text-gray-700">Cacambas Pereira Ltda</p>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-600 mb-1">CNPJ</p>
+                  <p className="text-gray-700">12.345.678/0001-90</p>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-600 mb-1">Inscrição Municipal</p>
+                  <p className="text-gray-700">123.456.789-0</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
