@@ -39,10 +39,11 @@ const Services: React.FC = () => {
             return (
               <div 
                 key={index}
-                className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl group"
               >
-                <div className="bg-primary text-white p-8 text-center">
-                  <Icon size={48} className="mx-auto" />
+                <div className="bg-primary text-white p-8 text-center relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary to-blue-800 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                  <Icon size={48} className="mx-auto relative z-10 transform group-hover:scale-110 transition-transform duration-300" />
                 </div>
                 <div className="p-8">
                   <h3 className="text-xl font-bold text-primary mb-4">{service.title}</h3>

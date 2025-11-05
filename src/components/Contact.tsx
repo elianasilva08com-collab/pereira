@@ -185,9 +185,12 @@ Aguardo retorno. Obrigado!`;
               <button
                 type="submit"
                 disabled={isLoadingCep}
-                className="w-full bg-secondary hover:bg-orange-600 text-white py-3 rounded-lg font-bold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
+                className="w-full bg-secondary hover:bg-orange-600 text-white py-3 rounded-lg font-bold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg relative overflow-hidden group"
               >
+                <span className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                <span className="relative z-10">
                 {isLoadingCep ? 'Buscando CEP...' : 'Enviar para WhatsApp'}
+                </span>
               </button>
             </form>
           </div>

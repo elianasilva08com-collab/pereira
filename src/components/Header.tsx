@@ -40,13 +40,13 @@ const Header: React.FC = () => {
   return (
     <header 
       className={`fixed w-full top-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-primary/95 backdrop-blur-sm' : 'bg-primary'
-      } shadow-lg`}
+        isScrolled ? 'bg-primary/95 backdrop-blur-sm shadow-xl' : 'bg-primary shadow-lg'
+      }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div 
-            className="text-2xl font-bold text-white cursor-pointer"
+            className="text-2xl font-bold text-white cursor-pointer transition-all duration-300 hover:text-secondary"
             onClick={() => scrollToSection('home')}
           >
             Cacambas <span className="text-secondary">Pereira</span>
@@ -58,8 +58,9 @@ const Header: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
-                className="text-white hover:text-secondary transition-colors duration-300 font-medium"
+                className="text-white hover:text-secondary transition-all duration-300 font-medium relative group"
               >
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-secondary group-hover:w-full transition-all duration-300"></span>
                 {item.label}
               </button>
             ))}

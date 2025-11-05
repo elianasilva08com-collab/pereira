@@ -34,11 +34,11 @@ const Process: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, index) => (
-            <div key={index} className="text-center">
-              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+            <div key={index} className="text-center group">
+              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 transition-all duration-300 group-hover:bg-secondary group-hover:scale-110 group-hover:shadow-lg">
                 {step.number}
               </div>
-              <h3 className="text-xl font-bold text-dark mb-4">{step.title}</h3>
+              <h3 className="text-xl font-bold text-dark mb-4 group-hover:text-primary transition-colors duration-300">{step.title}</h3>
               <p className="text-gray-600 leading-relaxed">{step.description}</p>
             </div>
           ))}
