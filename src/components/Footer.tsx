@@ -41,7 +41,7 @@ const Footer: React.FC = () => {
     {
       title: 'Contato',
       contactInfo: [
-        { icon: Phone, text: '(11) 4863-7094' },
+        { icon: Phone, text: '(11) 92002-9846' },
         { icon: Mail, text: 'contato@cacambaspereira.com.br' },
         { icon: MapPin, text: 'Rua Da Paz, 1234 - Chácara Santo Antônio, São Paulo - SP' },
       ],
