@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const About: React.FC = () => {
   const scrollToContact = () => {
@@ -35,15 +36,15 @@ const About: React.FC = () => {
             <p className="text-lg leading-relaxed">
               Contamos com uma equipe qualificada e equipamentos modernos para garantir a excelência em todos os serviços prestados.
             </p>
-            <button
-              onClick={scrollToContact}
+            <Link
+              to="/contato"
               className="bg-primary hover:bg-blue-800 text-white px-8 py-4 rounded-lg font-bold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg relative overflow-hidden group"
             >
               <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               <span className="relative z-10">
               Entre em Contato
               </span>
-            </button>
+            </Link>
           </div>
 
           <div className="rounded-xl overflow-hidden shadow-2xl">

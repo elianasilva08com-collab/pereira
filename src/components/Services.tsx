@@ -1,5 +1,6 @@
 import React from 'react';
 import { Truck, Wrench, Trash2, Construction } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Services: React.FC = () => {
   const services = [
@@ -47,7 +48,16 @@ const Services: React.FC = () => {
                 </div>
                 <div className="p-8">
                   <h3 className="text-xl font-bold text-primary mb-4">{service.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{service.description}</p>
+                  <p className="text-gray-600 leading-relaxed mb-6">{service.description}</p>
+                  <Link
+                    to="/contato"
+                    className="bg-primary hover:bg-blue-800 text-white px-6 py-3 rounded-lg font-bold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg relative overflow-hidden group inline-block"
+                  >
+                    <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                    <span className="relative z-10">
+                    Solicitar Orçamento
+                    </span>
+                  </Link>
                 </div>
               </div>
             );

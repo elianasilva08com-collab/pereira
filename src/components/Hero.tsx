@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Hero: React.FC = () => {
   const scrollToContact = () => {
@@ -32,15 +33,15 @@ const Hero: React.FC = () => {
           Há mais de 14 anos oferecendo serviços de qualidade em locações, transportes e coletas de entulhos em São Paulo e região.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <button
-            onClick={scrollToContact}
+          <Link
+            to="/contato"
             className="bg-secondary hover:bg-orange-600 text-white px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl w-full sm:w-auto relative overflow-hidden group"
           >
             <span className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
             <span className="relative z-10">
             Solicitar Orçamento
             </span>
-          </button>
+          </Link>
           <a
             href="https://api.whatsapp.com/send/?phone=551148637094&text=Ol%C3%A1%21+Gostaria+de+solicitar+um+or%C3%A7amento+para+os+servi%C3%A7os+da+Cacambas+Pereira.&type=phone_number&app_absent=0"
             target="_blank"
