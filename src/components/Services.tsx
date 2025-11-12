@@ -49,15 +49,17 @@ const Services: React.FC = () => {
                 <div className="p-8">
                   <h3 className="text-xl font-bold text-primary mb-4">{service.title}</h3>
                   <p className="text-gray-600 leading-relaxed mb-6">{service.description}</p>
-                  <Link
-                    to="/contato"
-                    className="bg-primary hover:bg-blue-800 text-white px-6 py-3 rounded-lg font-bold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg relative overflow-hidden group inline-block"
+                  <button
+                    onClick={() => {
+                      window.open('https://api.whatsapp.com/send/?phone=551151926487&text=Ol%C3%A1%21+Gostaria+de+solicitar+um+or%C3%A7amento+para+os+servi%C3%A7os+da+Cacambas+Pereira.&type=phone_number&app_absent=0', '_blank');
+                    }}
+                    className="bg-primary hover:bg-blue-800 text-white px-6 py-3 rounded-lg font-bold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg relative overflow-hidden group"
                   >
                     <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                     <span className="relative z-10">
                     Solicitar Orçamento
                     </span>
-                  </Link>
+                  </button>
                 </div>
               </div>
             );

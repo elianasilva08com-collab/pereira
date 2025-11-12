@@ -87,7 +87,7 @@ Aguardo retorno. Obrigado!`;
     {
       icon: Phone,
       title: 'Telefones',
-      content: ['(11) 92002-9846'],
+      content: ['(11) 5192-6487'],
     },
     {
       icon: Mail,
