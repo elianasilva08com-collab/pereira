@@ -141,7 +141,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     // Gera arquivo index.html atualizado
     const updatedHtml = generateUpdatedIndexHtml();
     
-    setTimeout(() => {
+    globalThis.setTimeout(() => {
       setIsLoading(false);
       setMessage(`✅ Google Tag ${tagId} preparado! Clique em "Baixar index.html" para obter o arquivo atualizado.`);
     }, 1000);
@@ -209,7 +209,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
       document.head.appendChild(newScript);
     });
 
-    setTimeout(() => {
+    globalThis.setTimeout(() => {
       setIsLoading(false);
       setMessage('✅ HTML personalizado preparado! Clique em "Baixar index.html" para obter o arquivo atualizado.');
     }, 1000);
@@ -231,7 +231,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     script.innerHTML = eventSnippet.trim();
     document.head.appendChild(script);
 
-    setTimeout(() => {
+    globalThis.setTimeout(() => {
       setIsLoading(false);
       setMessage('✅ Snippet de evento preparado! Clique em "Baixar index.html" para obter o arquivo atualizado.');
     }, 1000);
@@ -248,7 +248,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     const existingScripts = document.querySelectorAll('script[src*="googletagmanager.com"], script[data-google-tag]');
     existingScripts.forEach(script => script.remove());
 
-    setTimeout(() => {
+    globalThis.setTimeout(() => {
       setIsLoading(false);
       setMessage('✅ Google Tag removido! Clique em "Baixar index.html" para obter o arquivo atualizado.');
     }, 1000);
@@ -261,7 +261,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     setCurrentHtml('');
     setCustomHtml('');
 
-    setTimeout(() => {
+    globalThis.setTimeout(() => {
       setIsLoading(false);
       setMessage('✅ HTML personalizado removido! Clique em "Baixar index.html" para obter o arquivo atualizado.');
     }, 1000);
@@ -274,7 +274,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     setCurrentEventSnippet('');
     setEventSnippet('');
 
-    setTimeout(() => {
+    globalThis.setTimeout(() => {
       setIsLoading(false);
       setMessage('✅ Snippet de evento removido! Clique em "Baixar index.html" para obter o arquivo atualizado.');
     }, 1000);
