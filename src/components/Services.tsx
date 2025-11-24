@@ -51,7 +51,7 @@ const Services: React.FC = () => {
                   <p className="text-gray-600 leading-relaxed mb-6">{service.description}</p>
                   <button
                     onClick={() => {
-                      window.open('https://api.whatsapp.com/send/?phone=551152864684&text=Ol%C3%A1%21+Gostaria+de+solicitar+um+or%C3%A7amento+para+os+servi%C3%A7os+da+Pereira+Cacambas.&type=phone_number&app_absent=0', '_blank');
+                      window.open('https://api.whatsapp.com/send/?phone=551151948178&text=Ol%C3%A1%21+Gostaria+de+solicitar+um+or%C3%A7amento+para+os+servi%C3%A7os+da+Pereira+Cacambas.&type=phone_number&app_absent=0', '_blank');
                     }}
                     className="bg-primary hover:bg-blue-800 text-white px-6 py-3 rounded-lg font-bold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg relative overflow-hidden group"
                   >
