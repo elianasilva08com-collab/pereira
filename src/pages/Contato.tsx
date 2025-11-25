@@ -381,11 +381,11 @@ Aguardo retorno com o orçamento. Obrigado!`;
             Ligue agora e fale diretamente com nossa equipe especializada
           </p>
           <a
-            href="tel:+551152864548"
+            href="tel:+551151948178"
             className="bg-secondary hover:bg-orange-600 text-white px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl inline-flex items-center gap-2"
           >
             <Phone size={20} />
-            (11) 5286-4548
+            (11) 5194-8178
           </a>
         </div>
       </div>
