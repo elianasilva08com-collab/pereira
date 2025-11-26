@@ -90,7 +90,7 @@ ${formData.message || 'Nenhuma observação adicional'}
 Aguardo retorno com o orçamento. Obrigado!`;
 
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://api.whatsapp.com/send/?phone=551151926487&text=${encodedMessage}&type=phone_number&app_absent=0`;
+    const whatsappUrl = `https://api.whatsapp.com/send/?phone=5511920029846&text=${encodedMessage}&type=phone_number&app_absent=0`;
     
     window.open(whatsappUrl, '_blank');
   };
@@ -381,11 +381,11 @@ Aguardo retorno com o orçamento. Obrigado!`;
             Ligue agora e fale diretamente com nossa equipe especializada
           </p>
           <a
-            href="tel:+551151926487"
+            href="tel:+5511920029846"
             className="bg-secondary hover:bg-orange-600 text-white px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl inline-flex items-center gap-2"
           >
             <Phone size={20} />
-            (11) 5192-6487
+            (11) 92002-9846
           </a>
         </div>
       </div>
