@@ -78,7 +78,7 @@ Número: ${formData.number}
 Aguardo retorno. Obrigado!`;
 
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://api.whatsapp.com/send/?phone=551151948178&text=${encodedMessage}&type=phone_number&app_absent=0`;
+    const whatsappUrl = `https://api.whatsapp.com/send/?phone=551151926487&text=${encodedMessage}&type=phone_number&app_absent=0`;
     
     window.open(whatsappUrl, '_blank');
   };
