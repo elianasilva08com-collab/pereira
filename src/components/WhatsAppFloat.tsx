@@ -2,7 +2,7 @@ import React from 'react';
 
 const WhatsAppFloat: React.FC = () => {
   const handleWhatsAppClick = () => {
-    const whatsappUrl = 'https://api.whatsapp.com/send/?phone=5511920029846&text=Ol%C3%A1%21+Gostaria+de+solicitar+um+or%C3%A7amento+para+os+servi%C3%A7os+da+Pereira+Cacambas.&type=phone_number&app_absent=0';
+    const whatsappUrl = 'https://api.whatsapp.com/send/?phone=551151948178&text=Ol%C3%A1%21+Gostaria+de+solicitar+um+or%C3%A7amento+para+os+servi%C3%A7os+da+Cacambas+Pereira.&type=phone_number&app_absent=0';
     window.open(whatsappUrl, '_blank');
   };
 
