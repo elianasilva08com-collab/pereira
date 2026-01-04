@@ -102,7 +102,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cacambas Pereira - Locação, Transporte e Coleta de Entulhos</title>
+    <title>Cem Entulhos - Locação, Transporte e Coleta de Entulhos</title>
     <meta name="description" content="Oferecendo serviços de qualidade em locações, transportes e coletas de entulhos em São Paulo e região." />
     
     ${googleTagId ? generateTagCode(googleTagId) : '<!-- Google Tag não configurada -->'}

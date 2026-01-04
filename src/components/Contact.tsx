@@ -66,7 +66,7 @@ const Contact: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const message = `Olá! Gostaria de solicitar um orçamento para os serviços da Cacambas Pereira.
+    const message = `Olá! Gostaria de solicitar um orçamento para os serviços da Cem Entulhos.
 
 *Dados do Cliente:*
 Nome: ${formData.name}
@@ -97,7 +97,7 @@ Aguardo retorno. Obrigado!`;
     {
       icon: MapPin,
       title: 'Endereço',
-      content: ['Rua Da Paz, 1234 - Chácara Santo Antônio', 'São Paulo - SP, CEP: 04713-001'],
+      content: ['Rua Sobral Junior, 167 Sala 26 - Vila Maria Alta', 'São Paulo - SP, CEP: 02130-020'],
     },
     {
       icon: Clock,

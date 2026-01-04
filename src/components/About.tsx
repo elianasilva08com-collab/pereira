@@ -25,7 +25,7 @@ const About: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             <p className="text-lg leading-relaxed">
-              A <strong>Cacambas Pereira</strong> é uma empresa especializada em locações, transportes e coletas de entulhos.
+              A <strong>Cem Entulhos</strong> é uma empresa especializada em locações, transportes e coletas de entulhos.
             </p>
             <p className="text-lg leading-relaxed">
               Com sede em São Paulo, atendemos toda a região com profissionalismo, agilidade e comprometimento com a satisfação dos nossos clientes.
@@ -50,7 +50,7 @@ const About: React.FC = () => {
           <div className="rounded-xl overflow-hidden shadow-2xl">
             <img 
               src="/69E13834-3D09-46F6-AC83-088B145A110A-576w.webp" 
-              alt="Caminhão da Cacambas Pereira com containers para coleta de entulhos"
+              alt="Caminhão da Cem Entulhos com containers para coleta de entulhos"
               className="w-full h-auto"
             />
           </div>

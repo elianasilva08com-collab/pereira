@@ -11,13 +11,13 @@ const Location: React.FC = () => {
 
         <div className="rounded-xl overflow-hidden shadow-2xl h-96">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3656.123456789!2d-46.123456789!3d-23.123456789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sRua+Da+Paz%2C+1234+-+Ch%C3%A1cara+Santo+Ant%C3%B4nio%2C+S%C3%A3o+Paulo+-+SP%2C+04713-001!5e0!3m2!1spt-BR!2sbr!4v1640995200000!5m2!1spt-BR!2sbr"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3658.123456789!2d-46.123456789!3d-23.123456789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sRua+Sobral+Junior%2C+167+-+Vila+Maria+Alta%2C+S%C3%A3o+Paulo+-+SP%2C+02130-020!5e0!3m2!1spt-BR!2sbr!4v1640995200000!5m2!1spt-BR!2sbr"
             width="100%"
             height="100%"
             style={{ border: 0 }}
             allowFullScreen
             loading="lazy"
-            title="Localização da Cacambas Pereira"
+            title="Localização da Cem Entulhos"
           />
         </div>
         
@@ -26,13 +26,13 @@ const Location: React.FC = () => {
             <div>
               <h3 className="text-xl font-bold text-primary mb-4">Como Chegar</h3>
               <p className="text-gray-700 mb-2">
-                Localizada no bairro Chácara Santo Antônio, zona sul de São Paulo.
+                Localizada no bairro Vila Maria Alta, zona norte de São Paulo.
               </p>
               <p className="text-gray-700 mb-4">
                 Fácil acesso por transporte público e particular.
               </p>
               <a
-                href="https://www.google.com/maps/dir//Rua+Da+Paz,+1234+-+Chácara+Santo+Antônio,+São+Paulo+-+SP,+04713-001"
+                href="https://www.google.com/maps/dir//Rua+Sobral+Junior,+167+-+Vila+Maria+Alta,+São+Paulo+-+SP,+02130-020"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-primary hover:bg-blue-800 text-white px-6 py-3 rounded-lg font-bold transition-all duration-300 inline-flex items-center gap-2"
@@ -48,15 +48,15 @@ const Location: React.FC = () => {
               <div className="space-y-3">
                 <div>
                   <p className="text-sm font-semibold text-gray-600 mb-1">Razão Social</p>
-                  <p className="text-gray-700">Cacambas Pereira Ltda</p>
+                  <p className="text-gray-700">Cem Entulhos Locacao de Cacamba LTDA</p>
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-gray-600 mb-1">CNPJ</p>
-                  <p className="text-gray-700">12.345.678/0001-90</p>
+                  <p className="text-gray-700">51.548.087/0001-77</p>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-600 mb-1">Inscrição Municipal</p>
-                  <p className="text-gray-700">123.456.789-0</p>
+                  <p className="text-sm font-semibold text-gray-600 mb-1">Endereço</p>
+                  <p className="text-gray-700">Rua Sobral Junior, 167 Sala 26 - Vila Maria Alta</p>
                 </div>
               </div>
             </div>

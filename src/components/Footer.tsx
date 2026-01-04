@@ -17,7 +17,7 @@ export const Footer: React.FC = () => {
 
   const footerSections = [
     {
-      title: 'Cacambas Pereira',
+      title: 'Cem Entulhos',
       content: 'Oferecendo soluções em locações, transportes e coletas de entulhos com qualidade e responsabilidade.',
       social: true,
     },
@@ -43,7 +43,7 @@ export const Footer: React.FC = () => {
       contactInfo: [
         { icon: Phone, text: '(11) 5192-6487' },
         { icon: Mail, text: 'contato@cacambaspereira.com.br' },
-        { icon: MapPin, text: 'Rua Da Paz, 1234 - Chácara Santo Antônio, São Paulo - SP' },
+        { icon: MapPin, text: 'Rua Sobral Junior, 167 Sala 26 - Vila Maria Alta, São Paulo - SP, CEP: 02130-020' },
       ],
     },
   ];
@@ -109,7 +109,7 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="border-t border-gray-700 pt-8 text-center text-gray-400 text-sm">
-          <p>&copy; 2024 Cacambas Pereira - Todos os direitos reservados</p>
+          <p>&copy; 2024 Cem Entulhos - Todos os direitos reservados</p>
         </div>
       </div>
     </footer>
