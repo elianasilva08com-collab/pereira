@@ -69,7 +69,7 @@ const ContatoPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const message = `🚛 *SOLICITAÇÃO DE ORÇAMENTO - CEM ENTULHOS*
+    const message = `🚛 *SOLICITAÇÃO DE ORÇAMENTO - CACAMBA PEREIRA*
 
 *📋 DADOS DO CLIENTE:*
 • Nome: ${formData.name}
@@ -158,7 +158,7 @@ Aguardo retorno com o orçamento. Obrigado!`;
               <span className="font-medium">Voltar</span>
             </button>
             <div className="text-2xl font-bold text-primary">
-              Cem <span className="text-secondary">Entulhos</span>
+              Cacamba <span className="text-secondary">Pereira</span>
             </div>
             <div className="w-20"></div>
           </div>
@@ -208,7 +208,7 @@ Aguardo retorno com o orçamento. Obrigado!`;
 
             {/* Benefits */}
             <div className="bg-gradient-to-br from-primary to-blue-800 text-white p-8 rounded-xl shadow-xl">
-              <h3 className="text-xl font-bold mb-6 text-center">Por que escolher a Cem Entulhos?</h3>
+              <h3 className="text-xl font-bold mb-6 text-center">Por que escolher a Cacamba Pereira?</h3>
               <div className="space-y-3">
                 {benefits.map((benefit, index) => (
                   <div key={index} className="flex items-start space-x-3">

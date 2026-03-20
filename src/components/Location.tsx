@@ -17,7 +17,7 @@ const Location: React.FC = () => {
             style={{ border: 0 }}
             allowFullScreen
             loading="lazy"
-            title="Localização da Cem Entulhos"
+            title="Localização da Cacamba Pereira"
           />
         </div>
         
@@ -48,7 +48,7 @@ const Location: React.FC = () => {
               <div className="space-y-3">
                 <div>
                   <p className="text-sm font-semibold text-gray-600 mb-1">Razão Social</p>
-                  <p className="text-gray-700">Cem Entulhos Locacao de Cacamba LTDA</p>
+                  <p className="text-gray-700">Cacamba Pereira Locacao de Cacamba LTDA</p>
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-gray-600 mb-1">CNPJ</p>

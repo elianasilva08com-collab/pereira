@@ -17,7 +17,7 @@ export const Footer: React.FC = () => {
 
   const footerSections = [
     {
-      title: 'Cem Entulhos',
+      title: 'Cacamba Pereira',
       content: 'Oferecendo soluções em locações, transportes e coletas de entulhos com qualidade e responsabilidade.',
       social: true,
     },
@@ -109,7 +109,7 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="border-t border-gray-700 pt-8 text-center text-gray-400 text-sm">
-          <p>&copy; 2024 Cem Entulhos - Todos os direitos reservados</p>
+          <p>&copy; 2024 Cacamba Pereira - Todos os direitos reservados</p>
         </div>
       </div>
     </footer>

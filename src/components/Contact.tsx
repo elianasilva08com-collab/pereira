@@ -66,7 +66,7 @@ const Contact: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const message = `Olá! Gostaria de solicitar um orçamento para os serviços da Cem Entulhos.
+    const message = `Olá! Gostaria de solicitar um orçamento para os serviços da Cacamba Pereira.
 
 *Dados do Cliente:*
 Nome: ${formData.name}
